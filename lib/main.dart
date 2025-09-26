@@ -155,7 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class Result extends StatelessWidget {
-  const Result({Key? key, required this.text}) : super(key: key);
+  const Result({super.key, required this.text});
 
   final String text;
 
