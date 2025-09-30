@@ -127,7 +127,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             controller: _nameController,
             decoration: InputDecoration(
               labelText: 'Nome',
-              hintText: 'Digite seu nome completo',
+              hintText: 'Digite o seu nome completo',
               prefixIcon: const Icon(Icons.person_outline),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
