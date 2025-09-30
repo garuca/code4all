@@ -20,7 +20,7 @@ android {
 
     defaultConfig {
         applicationId = "br.com.garuca.code4all"
-        minSdk = project.property("flutter.minSdkVersion").toString().toInt()
+        minSdk = 24
         targetSdk = project.property("flutter.targetSdkVersion").toString().toInt()
         versionCode = flutter.versionCode.toInt()
         versionName = flutter.versionName
