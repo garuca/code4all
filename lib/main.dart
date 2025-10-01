@@ -4,6 +4,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_scalable_ocr/flutter_scalable_ocr.dart';
 
+import 'profile_screen.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
@@ -12,12 +14,27 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Scalable OCR',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          floatingLabelStyle: TextStyle(color: Colors.blue.shade700),
+        ),
+      ),
       home: const MyHomePage(title: 'Flutter Scalable OCR'),
     );
   }
@@ -54,8 +71,21 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
-      body: Center(
+      appBar: AppBar(
+        title: Text(widget.title),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person_outline),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfileScreen()),
+              );
+            },
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -93,59 +123,80 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: const Center(child: CircularProgressIndicator()),
                     ),
                   ),
-            StreamBuilder<String>(
-              stream: controller.stream,
-              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                return Result(
-                  text: snapshot.data != null ? snapshot.data! : "",
-                );
-              },
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: StreamBuilder<String>(
+                stream: controller.stream,
+                builder:
+                    (BuildContext context, AsyncSnapshot<String> snapshot) {
+                      return Result(
+                        text: snapshot.data != null ? snapshot.data! : "",
+                      );
+                    },
+              ),
             ),
-            Column(
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      loading = true;
-                      cameraSelection = cameraSelection == 0 ? 1 : 0;
-                    });
-                    Future.delayed(const Duration(milliseconds: 150), () {
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.switch_camera_outlined),
+                    label: const Text("Câmera"),
+                    onPressed: () {
                       setState(() {
-                        loading = false;
+                        loading = true;
+                        cameraSelection = cameraSelection == 0 ? 1 : 0;
                       });
-                    });
-                  },
-                  child: const Text("Switch Camera"),
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    setState(() {
-                      loading = true;
-                      torchOn = !torchOn;
-                    });
-                    Future.delayed(const Duration(milliseconds: 150), () {
+                      Future.delayed(const Duration(milliseconds: 150), () {
+                        setState(() {
+                          loading = false;
+                        });
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  ElevatedButton.icon(
+                    icon: Icon(
+                      torchOn
+                          ? Icons.flash_on_outlined
+                          : Icons.flash_off_outlined,
+                    ),
+                    label: const Text("Lanterna"),
+                    onPressed: () async {
                       setState(() {
-                        loading = false;
+                        loading = true;
+                        torchOn = !torchOn;
                       });
-                    });
-                  },
-                  child: const Text("Toggle Torch"),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      loading = true;
-                      lockCamera = !lockCamera;
-                    });
-                    Future.delayed(const Duration(milliseconds: 150), () {
+                      Future.delayed(const Duration(milliseconds: 150), () {
+                        setState(() {
+                          loading = false;
+                        });
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  ElevatedButton.icon(
+                    icon: Icon(
+                      lockCamera
+                          ? Icons.lock_outline
+                          : Icons.lock_open_outlined,
+                    ),
+                    label: const Text("Travar"),
+                    onPressed: () {
                       setState(() {
-                        loading = false;
+                        loading = true;
+                        lockCamera = !lockCamera;
                       });
-                    });
-                  },
-                  child: const Text("Toggle Lock Camera"),
-                ),
-              ],
+                      Future.delayed(const Duration(milliseconds: 150), () {
+                        setState(() {
+                          loading = false;
+                        });
+                      });
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -161,6 +212,10 @@ class Result extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text("Readed text: $text");
+    return Text(
+      "Texto Identificado: $text",
+      style: Theme.of(context).textTheme.titleMedium,
+      textAlign: TextAlign.center,
+    );
   }
 }
